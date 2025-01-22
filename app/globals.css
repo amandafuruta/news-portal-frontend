@@ -1,42 +1,57 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html{
+  scroll-behavior: smooth;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+body{
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+:root {
+  --primary-color: #F05841;
+  --power-color: #132fcc;
+  --economy-color: #1dbb2a;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+[class*= "container"] {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 20px;
+
+  @media(max-width: 1400px) {
+      max-width: 1120px;
   }
+}
+
+[class*= "bgPrimary"]{
+  background-color: var(--primary-color);
+}
+
+[class*= "primary"]{
+  color: var(--primary-color);
+}
+
+[class*= "health"]{
+  color: var(--primary-color);
+}
+
+[class*= "power"]{
+  color: var(--power-color);
+}
+
+[class*= "economy"]{
+  color: var(--economy-color);
+}
+
+.menuOption{
+  color:#fff;
+  text-transform: uppercase;
+}
+
+.secondSectionTitle{
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: 600;
+  width: 100%;
+  margin-bottom: 20px;
 }
