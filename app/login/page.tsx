@@ -1,8 +1,14 @@
-import {Box, Text, Flex, Grid, GridItem, Image} from '@chakra-ui/react';
+'use client' 
+import SignIn from '@/components/site/signIn/page';
+import Signup from '@/components/site/signup/page';
+import {Box, Text, Flex, Image} from '@chakra-ui/react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { FaArrowLeft } from "react-icons/fa";
 
 export default function Login(){
+  const [signupDisplay, setSignupDisplay] = useState(false)
+
   return(
     <Flex
       w="100%"
@@ -40,21 +46,18 @@ export default function Login(){
         right='0'
         w='55vw'
         h='100%' 
-        backgroundColor='#fff'
+        backgroundColor='#e4e2e2'
         borderLeftRadius={'100px'}
         display='flex'
         alignItems='center'
         justifyContent='center'>
-          <Box>
-            <Text
-            className='primary'
-            textTransform={'uppercase'}
-            fontSize='40px'
-            fontWeight={600}>
-              Login
-            </Text>
-          </Box>
+          {signupDisplay?
+          <Signup setSignupDisplay={setSignupDisplay}/>
+        :
+          <SignIn setSignupDisplay={setSignupDisplay}/>
+        }
         </Box>
     </Flex>
   )
 }
+

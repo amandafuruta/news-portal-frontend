@@ -308,6 +308,7 @@ const news=[
 ]
 
 export default function Home() {
+  
   return (
     <>
     <Header />
@@ -317,9 +318,9 @@ export default function Home() {
           <GridItem colSpan={2} >
             <Flex justifyContent={'space-between'}>
               {news.filter(newsChild => newsChild.section === 1 && newsChild.order === 1)
-                .map((newsChild, index) => 
+                .map((newsChild) => 
                   <NewsCard
-                  id={index}
+                  key={newsChild.id}
                   category= {newsChild.category}
                   title= {newsChild.title}
                   subtitle= {newsChild.subtitle}
@@ -332,9 +333,9 @@ export default function Home() {
               } 
               <Flex flexDirection='column'>
                 {news.filter(newsChild => newsChild.section === 1 && newsChild.order != 1)
-                  .map((newsChild, index) => 
+                  .map((newsChild) => 
                     <NewsCard
-                    id={index}
+                    key={newsChild.id}
                     category= {newsChild.category}
                     title= {newsChild.title}
                     image= {newsChild.image}

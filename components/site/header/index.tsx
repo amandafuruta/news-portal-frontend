@@ -1,6 +1,9 @@
+'use client'
 import { Box , Image, Text } from "@chakra-ui/react";
 import Link from 'next/link';
 export default function Header(){
+  const userToken = localStorage.getItem('user_token') || null;
+
   return(
     <Box position='fixed' top={0} w='100%' zIndex={2} backgroundColor='#fff'>
       <Box className="container" >
@@ -9,19 +12,34 @@ export default function Header(){
         display='flex' 
         justifyContent='space-between'
         alignItems='center'>
-          <Box>
-            <Image src='https://www.jota.info/images/meta/jotalogo.svg'/>
-          </Box>
+          <Link href='/'>
+            <Box cursor='pointer'>
+              <Image src='https://www.jota.info/images/meta/jotalogo.svg'/>
+            </Box>
+          </Link>
           <Box display='flex'>
-            <Link href='/login'>
-              <Text 
-              className="primary" 
-              mr='20px'
-              fontSize='18px'
-              fontWeight={600}>
-                Entrar
-              </Text>
-            </Link>
+            {
+              userToken?
+              <Link href='/reader-profile'>
+                <Text 
+                className="primary" 
+                mr='20px'
+                fontSize='18px'
+                fontWeight={600}>
+                  Meu perfil
+                </Text>
+              </Link>
+              :
+              <Link href='/login'>
+                <Text 
+                className="primary" 
+                mr='20px'
+                fontSize='18px'
+                fontWeight={600}>
+                  Entrar
+                </Text>
+              </Link>
+            }
           </Box>
         </Box>        
       </Box>

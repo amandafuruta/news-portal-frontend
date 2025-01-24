@@ -1,7 +1,6 @@
 import { Box, Image, Text } from "@chakra-ui/react"
 
 interface Props{
-  id: number
   category: string
   title: string
   subtitle?: string
@@ -12,10 +11,10 @@ interface Props{
 }
 
 export default function NewsCard(props:Props){
-  const { id, category, title, subtitle, image, alt, section, order } = props
+  const { category, title, subtitle, image, alt, section, order } = props
 
   return(
-    <Box display='flex' flexDirection='column' key={title} mb='20px'>
+    <Box display='flex' flexDirection='column' mb='20px'>
       <Box 
       maxW={section == 1 && order == 1 ? '450px' : '200px'} 
       w='100%'
