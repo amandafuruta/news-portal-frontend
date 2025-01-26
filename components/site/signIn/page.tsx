@@ -17,7 +17,7 @@ export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.D
     , { register, handleSubmit, formState: { errors }  } = useForm<IFormInput>()    
     , onSubmit: SubmitHandler<IFormInput> = async(data) => {
       setLoading(true)
-      const res = await fetch('http://127.0.0.1:8000/api/token-auth', {
+      const res = await fetch(`${process.env.PUBLIC_API_URL}/token-auth/`, {
         'method': 'POST',
         'body': JSON.stringify(data),
         'headers': { 

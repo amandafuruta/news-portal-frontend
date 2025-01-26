@@ -361,7 +361,7 @@ export default function Home() {
               })
               .map((newsChild, index) => (
                 <HorizontalCard
-                  id={index}
+                  key={index}
                   category= {newsChild.category}
                   title= {newsChild.title}
                   image= {newsChild.image}
@@ -387,7 +387,7 @@ export default function Home() {
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
               .map((newsChild, index)=> 
                 <HorizontalCard
-                  id={index}
+                  key={index}
                   title= {newsChild.title}
                   titleFontSize= {'18px'}
                   image= {newsChild.image}
@@ -409,7 +409,7 @@ export default function Home() {
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
               .map((newsChild, index)=> 
                 <HorizontalCard
-                  id={index}
+                  key={index}
                   title= {newsChild.title}
                   titleFontSize= {'18px'}
                   image= {newsChild.image}
@@ -431,7 +431,7 @@ export default function Home() {
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
               .map((newsChild, index)=> 
                 <HorizontalCard
-                  id={index}
+                  key={index}
                   title= {newsChild.title}
                   titleFontSize= {'18px'}
                   image= {newsChild.image}

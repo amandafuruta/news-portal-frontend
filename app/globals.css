@@ -23,6 +23,10 @@ body{
   }
 }
 
+[class*= "bgAdmin"]{
+  background-color: #d9ecf5;
+}
+
 [class*= "bgPrimary"]{
   background-color: var(--primary-color);
 }

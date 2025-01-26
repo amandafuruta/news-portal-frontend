@@ -1,7 +1,6 @@
 import {Box, Image, Text} from '@chakra-ui/react';
 
 interface Props{
-  id: number
   category?: string
   title: string
   titleFontSize?: string
@@ -10,10 +9,9 @@ interface Props{
 }
 
 export default function HorizontalCard(props:Props) {
-  const { id, category, title, titleFontSize, image, alt } = props
+  const { category, title, titleFontSize, image, alt } = props
   return(
-    <Box 
-    key={id} 
+    <Box  
     display='flex' 
     alignItems='center'
     py='20px' 

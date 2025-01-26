@@ -21,8 +21,8 @@ export default function Signup({ setSignupDisplay }: { setSignupDisplay: React.D
       email : data.email,
       password : data.password
     }
-
-    const res = await fetch('http://127.0.0.1:8000/api/users', {
+  
+    const res = await fetch(`${process.env.PUBLIC_API_URL}/users/`, {
       'method': 'POST',
       'body': JSON.stringify(newData),
       'headers': { 
