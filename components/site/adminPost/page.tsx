@@ -39,9 +39,8 @@ export default function AdminPost(){
     try {
       const res = await fetch(`${process.env.PUBLIC_API_URL}/posts/`)
           , resData = await res.json()
-
-      setPostList(resData); 
-              
+          
+      setPostList(resData);         
     } catch (error) {
       console.error(error);
     }
@@ -133,7 +132,7 @@ export default function AdminPost(){
               </Flex>
               <Flex>
                 <Link 
-                href={`/admin/post/${post.id}`}
+                href={{ pathname: "/admin/add-edit-post/", query: { post: post.id } }}
                 >
                   <FaRegEdit  size={20} style={{marginRight:'20px'}}/>
                 </Link>
