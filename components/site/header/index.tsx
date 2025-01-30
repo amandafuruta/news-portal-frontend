@@ -1,8 +1,10 @@
 'use client'
 import { Box , Image, Text } from "@chakra-ui/react";
 import Link from 'next/link';
+import { useCookies } from 'react-cookie'
+
 export default function Header(){
-  const userToken = localStorage.getItem('user_token') || null;
+  const [cookies, , removeCookie] = useCookies(['user_token'])
 
   return(
     <Box position='fixed' top={0} w='100%' zIndex={2} backgroundColor='#fff'>
@@ -19,8 +21,8 @@ export default function Header(){
           </Link>
           <Box display='flex'>
             {
-              userToken?
-              <Link href='/reader-profile'>
+              cookies.user_token?
+              <Link href='/authenticated/reader-profile'>
                 <Text 
                 className="primary" 
                 mr='20px'

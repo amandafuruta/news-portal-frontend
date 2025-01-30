@@ -99,7 +99,7 @@ export default function AdminPost(){
         theme="light"
       />
       <Flex justifyContent='center' w='100%' pt='20px'>      
-        <Box maxW='1000px' w='100%'>
+        <Box maxW='1000px' w='100%' padding='10px'>
           {postList.map((post, index)=> 
             <Flex key={index} mb='20px' alignItems='center'>
               <Box 
@@ -132,7 +132,7 @@ export default function AdminPost(){
               </Flex>
               <Flex>
                 <Link 
-                href={{ pathname: "/admin/add-edit-post/", query: { post: post.id } }}
+                href={{ pathname: "/authenticated/admin/add-edit-post/", query: { post: post.id } }}
                 >
                   <FaRegEdit  size={20} style={{marginRight:'20px'}}/>
                 </Link>

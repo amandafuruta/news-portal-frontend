@@ -4,13 +4,15 @@ import Header from "@/components/site/header";
 import { Box, Text, Button, Spinner } from "@chakra-ui/react";
 import { redirect } from "next/navigation";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 
 export default function ReaderProfile(){
-  const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(false)
+      , [cookies, , removeCookie] = useCookies(['user_token'])
+      
   function Logout(){
     setLoading(true)
-    localStorage.removeItem('user_token')
+    removeCookie('user_token')
     redirect('/')
   }
 

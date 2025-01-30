@@ -4,6 +4,8 @@ import { Box, Button, Flex, Image, Input, Spinner, Stack, Text} from "@chakra-ui
 import { useState } from "react";
 import { Field } from '@/components/ui/field';
 import { redirect } from 'next/navigation';
+import { ToastContainer, toast } from 'react-toastify';
+import { useCookies } from 'react-cookie';
 
 interface IFormInput {
   username: string
@@ -12,16 +14,48 @@ interface IFormInput {
 
 export default function AdminLogin(){
   const [loading, setLoading] = useState(false)
-      , { register, handleSubmit, formState: { errors }  } = useForm<IFormInput>()    
+      , { register, handleSubmit, formState: { errors }  } = useForm<IFormInput>()  
+      , setCookie = useCookies()[1]        
       , onSubmit: SubmitHandler<IFormInput> = async(data) => {
         setLoading(true)
-        redirect('/admin/home')
+        const res = await fetch(`${process.env.PUBLIC_API_URL}/token-team-auth/`,  {
+          'method': 'POST',
+          'body': JSON.stringify(data),
+          'headers':{
+            'Content-type': 'application/json'
+          }
+        })
+
+        const resData = await res.json()
+
+        if (res.status === 401){
+          setLoading(false)
+          toast.error("Acesso restrito a membros do time");
+        } else if (res.status === 400){
+          setLoading(false)
+          toast.error("Dados inválidos");
+        } else if(res.ok){
+          setCookie('userteam_token', resData.token)
+          redirect('/authenticated/admin/home')
+        }
       }
       
   return(
     <Flex 
     className='bgAdmin'
     minH='100vh'>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <Flex 
       className='container'
       alignItems='center'

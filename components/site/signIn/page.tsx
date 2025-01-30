@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
 import { redirect } from 'next/navigation';
 import { useState } from 'react';
+import { useCookies } from 'react-cookie';
 
 interface IFormInput {
   username: string
@@ -14,6 +15,7 @@ interface IFormInput {
 
 export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.Dispatch<React.SetStateAction<boolean>> }){
   const [loading, setLoading] = useState(false)
+    , setCookie = useCookies()[1]
     , { register, handleSubmit, formState: { errors }  } = useForm<IFormInput>()    
     , onSubmit: SubmitHandler<IFormInput> = async(data) => {
       setLoading(true)
@@ -26,10 +28,10 @@ export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.D
       })
 
       const resData = await res.json()
-
+      
       if (res.ok) {
-        localStorage.setItem('user_token', resData.token)
-        redirect('/reader-profile')
+        setCookie('user_token', resData.token)
+        redirect('/authenticated/reader-profile')
       }
 
       if (!res.ok) {

@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { MdArrowBack } from "react-icons/md";
 import { ToastContainer, toast } from 'react-toastify';
+import { IoIosClose } from "react-icons/io";
 
 interface IFormInput {
   title: string
@@ -47,7 +48,8 @@ const category = createListCollection({
 
 export default function AddEditPost(){
   const [loading, setLoading] = useState(false)
-      , [categoryValue, setCategoryValue] = useState<string>("")
+      , [categoryValue, setCategoryValue] = useState<string>('')
+      , [displayImage, setDisplayImage] = useState<boolean>(false)
       , { register, handleSubmit, formState: { errors }, reset, setValue  } = useForm<IFormInput>()  
       , searchParams = useSearchParams()
       , itemId = searchParams.get('post')  
@@ -61,9 +63,9 @@ export default function AddEditPost(){
           
           if (res.ok) {
             const postData = await res.json();
-            console.log(postData)
+        
             setPost(postData);
-
+            setDisplayImage(true)
             // Set default values for form fields dynamically
             setValue('title', postData.title);
             setValue('subtitle', postData.subtitle);
@@ -87,15 +89,26 @@ export default function AddEditPost(){
   
   const onSubmit: SubmitHandler<IFormInput> = async(data) => {
     setLoading(true)
+
     const formData = new FormData();
     formData.append("title", data.title)
     formData.append("subtitle", data.subtitle)
-    formData.append("category", categoryValue)
     formData.append("auth", data.auth)
-    formData.append("body", data.body)
-    formData.append("image", data.image[0])        
+    formData.append("body", data.body)       
     formData.append("alt", data.alt)        
     formData.append("datePublished", new Date().toISOString())
+
+    if(categoryValue == ''){
+      formData.append("category", category.items[0].value)      
+    } else{
+      formData.append("category", categoryValue)
+    }
+
+    if (data.image instanceof FileList && data.image[0]) {
+      formData.append("image", data.image[0]);
+    } else if (typeof data.image === "string") {
+      formData.append("image", data.image);
+    }
 
     if (data.section !== null) {
       formData.append("section", data.section.toString())
@@ -105,55 +118,38 @@ export default function AddEditPost(){
       formData.append("order", data.order.toString())
     }
 
-    const addPost = async () => {
+    const savePost = async (method: 'POST' | 'PUT', url: string) => {
       try {
-        const res = await fetch(`${process.env.PUBLIC_API_URL}/posts/`, {
-          'method': 'POST',
-          'body': formData
+        const res = await fetch(url, {
+          method,
+          body: formData,
         })
-        // USED TO CHECK THE ERROR
-        // console.log('Response Status:', res.status); 
-        // const resData = await res.json(); 
-        // console.log('Response Data:', resData)   
+    
         if (res.ok) {
-          toast.success("Criado com sucesso");   
-          reset(); 
-          setLoading(false)          
-        } else{
-          toast.error("Ops, ocorreu um erro");
-        }      
+          const successMessage = method === 'POST' ? "Criado com sucesso" : "Editado com sucesso"
+          toast.success(successMessage)
+          if(method === 'POST'){
+            reset()
+          } 
+        } else {
+          toast.error("Ops, ocorreu um erro")
+        }
       } catch (error) {
-        console.error(error);
+        console.error(error)
+        toast.error("Ops, ocorreu um erro")
+      } finally {
+        setLoading(false)
       }
     }
-
-    const editPost = async () => {
-      try {
-        const res = await fetch(`${process.env.PUBLIC_API_URL}/posts/${itemId}/`, {
-          'method': 'PUT',
-          'body': formData
-        })
-        // USED TO CHECK THE ERROR
-        // console.log('Response Status:', res.status); 
-        // const resData = await res.json(); 
-        // console.log('Response Data:', resData)   
-        if (res.ok) {
-          toast.success("Editado com sucesso");   
-          reset(); 
-          setLoading(false)          
-        } else{
-          toast.error("Ops, ocorreu um erro");
-        }      
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    if(itemId){
-      editPost()
-    } else {
-      addPost()
-    }
+    
+    const url = itemId 
+      ? `${process.env.PUBLIC_API_URL}/posts/${itemId}/` 
+      : `${process.env.PUBLIC_API_URL}/posts/`
+    
+    const method = itemId ? 'PUT' : 'POST'
+    
+    setLoading(true)
+    savePost(method, url)
   }
   
   return(
@@ -171,7 +167,7 @@ export default function AddEditPost(){
         theme="light"
       />
       <Box className='container'  mb='30px'>
-        <Link href='/admin/home'>
+        <Link href='/authenticated/admin/home'>
           <Flex alignItems='center'>
             <MdArrowBack color='#0891B2' size={20}/>
             <Text fontSize='16px' >Voltar</Text>
@@ -208,6 +204,7 @@ export default function AddEditPost(){
               gap='4' 
               w='100%'
               alignItems='center'>
+                {/* Title */}
                 <Box position='relative' w='100%'>                
                   <Field label='Título'>
                     <Input 
@@ -215,7 +212,7 @@ export default function AddEditPost(){
                     mb='10px'
                     type='text'
                     defaultValue={post?.title}
-                    {...register("title", { required: "Título é obrigatório" })} />                  
+                    {...register("title", { required: "Campo obrigatório" })} />                  
                   </Field>
                   {errors.title && 
                     <Text 
@@ -227,6 +224,7 @@ export default function AddEditPost(){
                     </Text>
                   }
                 </Box>
+                {/* SubTitle */}
                 <Box position='relative' w='100%'>                
                   <Field label='Subtítulo'>
                     <Input 
@@ -234,7 +232,7 @@ export default function AddEditPost(){
                     mb='10px'
                     type='text'
                     defaultValue={post?.subtitle}
-                    {...register("subtitle", { required: "Subtítulo é obrigatório" })} />                  
+                    {...register("subtitle", { required: "Campo obrigatório" })} />                  
                   </Field>
                   {errors.subtitle && 
                     <Text 
@@ -246,9 +244,13 @@ export default function AddEditPost(){
                     </Text>
                   }
                 </Box>
+                {/* Category */}
                 <Box position='relative' w='100%'>
-                  <SelectRoot collection={category} size="sm" width="100%" 
-                  defaultValue={post?.category? [post.category]  : ['']}
+                  <SelectRoot collection={category} 
+                  size="sm" 
+                  width="100%"
+                  mb='10px' 
+                  value={categoryValue !=''? [categoryValue]: [category.items[0].value]}
                   onValueChange={(details) => {
                     const value = details.value; 
                     setCategoryValue(value[0]); 
@@ -256,7 +258,7 @@ export default function AddEditPost(){
                   >
                     <SelectLabel>Selecione a categoria</SelectLabel>
                     <SelectTrigger>
-                      <SelectValueText placeholder="categoria" />
+                      <SelectValueText />
                     </SelectTrigger>
                     <SelectContent>
                       {category.items.map((categoryChild) => (
@@ -264,9 +266,19 @@ export default function AddEditPost(){
                           {categoryChild.label}
                         </SelectItem>
                       ))}
-                    </SelectContent>
+                    </SelectContent>                    
                   </SelectRoot>
+                  {errors.category && 
+                    <Text 
+                    color="red.500" 
+                    fontSize="sm"
+                    position='absolute'
+                    bottom={-13}>
+                      {errors.category.message}
+                    </Text>
+                  }
                 </Box>
+                {/* Auth */}
                 <Box position='relative' w='100%'>                
                   <Field label='Autor'>
                     <Input 
@@ -274,7 +286,7 @@ export default function AddEditPost(){
                     mb='10px'
                     type='text'
                     defaultValue={post?.auth}
-                    {...register("auth", { required: "Autor é obrigatório" })} />                  
+                    {...register("auth", { required: "Campo obrigatório" })} />                  
                   </Field>
                   {errors.auth && 
                     <Text 
@@ -286,37 +298,62 @@ export default function AddEditPost(){
                     </Text>
                   }
                 </Box>
-                <Field label='Texto'>
-                  <Textarea  
-                    border='1px solid #969696'
-                    mb='10px'
-                    defaultValue={post?.body}
-                    {...register("body", { required: "Texto é obrigatório" })} />                  
-                  </Field>
-                  {errors.body && 
-                    <Text 
-                    color="red.500" 
-                    fontSize="sm"
-                    position='absolute'
-                    bottom={-3}>
-                      {errors.body.message}
-                    </Text>
-                  }
+                {/* Body */}
                 <Box position='relative' w='100%'>
-                  {post?.image?
-                    <Box>
-                      <Image src={post.image as string}/>
+                  <Field label='Texto'>
+                    <Textarea  
+                      border='1px solid #969696'
+                      mb='10px'
+                      defaultValue={post?.body}
+                      {...register("body", { required: "Campo obrigatório" })} />                  
+                    </Field>
+                    {errors.body && 
+                      <Text 
+                      color="red.500" 
+                      fontSize="sm"
+                      position='absolute'
+                      bottom={-3}>
+                        {errors.body.message}
+                      </Text>
+                    }
+                </Box>
+                {/* Image */}
+                <Box position='relative' w='100%'>
+                  {displayImage?
+                    <Box position='relative' pr='30px' maxW='300px' w='100%'>
+                      <Box 
+                      position='absolute' 
+                      right='0'
+                      cursor='pointer'
+                      onClick={()=>setDisplayImage(false)}>
+                        <IoIosClose color='red' size={25}/>
+                      </Box>
+                      <Box w='100%' >
+                        <Image src={post?.image as string} w='100%'/>
+                      </Box>
                     </Box>
                   :
                     <>
                     <Input
                       type="file"
-                      {...register("image", { required: "Obrigatório" })}
-                    />
-                    {errors.image && <p>{errors.image.message}</p>}      
+                      mb='10px'
+                      {...register("image", { 
+                        required: itemId ? false : "Campo obrigatório" 
+                      })}
+                    />                    
+                    {errors.image && 
+                      <Text 
+                      color="red.500" 
+                      fontSize="sm"
+                      position='absolute'
+                      bottom={-13}>
+                        {errors.image.message}
+                      </Text>
+                    }
                     </>
                   }
                 </Box>
+                {/* Alt */}
                 <Box position='relative' w='100%'>                
                   <Field label='Legenda da imagem'>
                     <Input 
