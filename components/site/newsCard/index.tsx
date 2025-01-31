@@ -19,7 +19,7 @@ export default function NewsCard(props:Props){
       maxW={section == 1 && order == 1 ? '450px' : '200px'} 
       w='100%'
       mb='10px'>
-        <Image src={`./${image}`} alt={alt} w='100%'/>
+        <Image src={image} alt={alt} w='100%'/>
       </Box>
       <Text 
       className={category == 'Saúde'? "primary" : category == 'Poder'? 'power': 'economy' }

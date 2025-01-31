@@ -1,7 +1,7 @@
 'use client'
 import Nav from "@/components/site/adminNav/page";
 import AdminPost from "@/components/site/adminPost/page";
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -27,25 +27,7 @@ export default function AdminHome(){
               Adicionar
             </Button>
           </Link>
-        </Flex>
-        <Flex 
-        maxW='1000px' 
-        w='100%' 
-        justifyContent='center'
-        mb='10px'
-        mt='30px'>
-          <Input 
-            type='text'
-            placeholder="Pesquisar por título" 
-            flex="1" 
-            mb='10px'
-            maxW='500px'
-            w='100%'
-            border="none"
-            borderBottom='1px solid #969696'
-            _focus={{ border:"none" }}
-          />   
-        </Flex>
+        </Flex>        
         {section == 'post' &&
           <AdminPost/>
         }

@@ -1,8 +1,10 @@
+'use client'
 import Footer from "@/components/site/footer/page";
 import Header from "@/components/site/header";
 import HorizontalCard from "@/components/site/horizontalCard";
 import NewsCard from "@/components/site/newsCard";
 import { Box, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 const news=[
   {
@@ -307,8 +309,39 @@ const news=[
   }
 ]
 
+interface Post{
+  id: number
+  category: string
+  title: string 
+  subtitle: string
+  auth: string
+  body: string
+  datePublished: string
+  dateUpdated: string
+  image: string
+  alt: string
+  order: number
+  section: number
+}
+
 export default function Home() {
-  
+  const [postList, setPostList] = useState<Post[]>([])
+
+  const getPostList = async () => {
+    try {
+      const res = await fetch(`${process.env.PUBLIC_API_URL}/posts/`)
+          , resData = await res.json()
+          
+        setPostList(resData);            
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getPostList();
+  }, []); 
+
   return (
     <>
     <Header />
@@ -317,7 +350,7 @@ export default function Home() {
         <Grid templateColumns="repeat(3, 1fr)" gap="6">
           <GridItem colSpan={2} >
             <Flex justifyContent={'space-between'}>
-              {news.filter(newsChild => newsChild.section === 1 && newsChild.order === 1)
+              {postList.filter(newsChild => newsChild.section === 1 && newsChild.order === 1)
                 .map((newsChild) => 
                   <NewsCard
                   key={newsChild.id}
@@ -331,8 +364,8 @@ export default function Home() {
                   />
                 )
               } 
-              <Flex flexDirection='column'>
-                {news.filter(newsChild => newsChild.section === 1 && newsChild.order != 1)
+              <Flex flexDirection='column' ml='10px'>
+                {postList.filter(newsChild => newsChild.section === 1 && newsChild.order != 1)
                   .map((newsChild) => 
                     <NewsCard
                     key={newsChild.id}
@@ -353,7 +386,7 @@ export default function Home() {
               Recentes
             </Text>
             <Flex flexDirection='column'>
-              {news.filter(newsChild => newsChild.section == undefined) 
+              {postList.filter(newsChild => newsChild.section == undefined) 
               .sort((a, b) => {
                 const dateA = new Date(a.datePublished)
                 const dateB = new Date(b.datePublished)
@@ -379,11 +412,11 @@ export default function Home() {
             <Text 
             className="power secondSectionTitle"
             borderBottom='1px solid #132fcc'>
-              Poder
+              Política
             </Text>
             <Flex flexDirection='column'>
-              {news
-              .filter(item => item.section === 2 && item.category === 'Poder') 
+              {postList
+              .filter(item => item.section === 2 && item.category === 'Política') 
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
               .map((newsChild, index)=> 
                 <HorizontalCard
@@ -404,7 +437,7 @@ export default function Home() {
               Economia
             </Text>
             <Flex flexDirection='column'>
-              {news
+              {postList
               .filter(item => item.section === 2 && item.category === 'Economia') 
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
               .map((newsChild, index)=> 
@@ -426,7 +459,7 @@ export default function Home() {
               Saúde
             </Text>
             <Flex flexDirection='column'>
-              {news
+              {postList
               .filter(item => item.section === 2 && item.category === 'Saúde') 
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
               .map((newsChild, index)=> 

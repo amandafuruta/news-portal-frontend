@@ -18,7 +18,7 @@ export default function HorizontalCard(props:Props) {
     borderBottom={'1px solid #f2f2f2'}
     h='138px'>
       <Box maxW='110px' w='100%' mr='20px'>
-        <Image src={`./${image}`} alt={alt} w='100%'/>
+        <Image src={image} alt={alt} w='100%'/>
       </Box>
       <Box display='flex' flexDirection='column'>
         <Text 

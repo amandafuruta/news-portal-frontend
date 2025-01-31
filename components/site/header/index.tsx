@@ -46,6 +46,7 @@ export default function Header(){
         </Box>        
       </Box>
       <Box className="bgPrimary" py='20px'>
+        {/* Desk */}
         <Box className="container" display='flex' justifyContent='space-between'>
           <Link href='/power'>
             <Text className='menuOption'>
