@@ -8,7 +8,7 @@ export default function Footer(){
         <Box mb='30px'>
           <Image src='https://www.jota.info/images/meta/jotalogo.svg'/>
         </Box>
-        <Grid templateColumns="repeat(4, 1fr)" gap="6">
+        <Grid templateColumns={{base:"repeat(2, 1fr)", md:"repeat(4, 1fr)"}} gap="6">
           <Box display='flex' flexDirection='column'>
             <Text fontWeight={500} mb='10px'> Poder PRO </Text>
             <Text mb='10px'>Apostas da Semana</Text>

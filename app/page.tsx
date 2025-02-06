@@ -347,9 +347,12 @@ export default function Home() {
     <Header />
     <Box mt='155px'>
       <Box className='container' pt='30px' as='section'>
-        <Grid templateColumns="repeat(3, 1fr)" gap="6">
-          <GridItem colSpan={2} >
-            <Flex justifyContent={'space-between'}>
+        <Grid 
+        templateColumns={{base:'repeat(2, 1fr)', lg: "repeat(3, 1fr)"}}
+        templateRows={{ base: 'auto', lg: 'auto' }}
+        gap="6">
+          <GridItem colSpan={2} rowSpan={{base: 1, lg: 0}}>
+            <Flex justifyContent={{base:'space-around', lg:'space-between'}}>
               {postList.filter(newsChild => newsChild.section === 1 && newsChild.order === 1)
                 .map((newsChild) => 
                   <NewsCard
@@ -381,11 +384,12 @@ export default function Home() {
               </Flex>                 
             </Flex>
           </GridItem>
-          <GridItem colSpan={1} pl='20px'>
+          <GridItem colSpan={{base: 2, lg: 1}} rowSpan={{base: 1, lg: 0}}
+          pl='20px'>
             <Text fontSize='20px' lineHeight={1} className='primary'>
               Recentes
             </Text>
-            <Flex flexDirection='column'>
+            <Flex flexDirection={{base:'column', sm:'row', lg:'column'}}>
               {postList.filter(newsChild => newsChild.section == undefined) 
               .sort((a, b) => {
                 const dateA = new Date(a.datePublished)
@@ -395,6 +399,7 @@ export default function Home() {
               .map((newsChild, index) => (
                 <HorizontalCard
                   key={index}
+                  id={newsChild.id}
                   category= {newsChild.category}
                   title= {newsChild.title}
                   image= {newsChild.image}
@@ -407,7 +412,10 @@ export default function Home() {
         </Grid>
       </Box>
       <Box className='container' py='60px' as='section'>
-        <Grid templateColumns="repeat(3, 1fr)" gap="6">
+        <Grid 
+        templateColumns={{base:'repeat(0)', md:"repeat(3, 1fr)"}} 
+        templateRows={{base:"repeat(3, 1fr)", md:"auto"}}
+        gap="6">
           <GridItem colSpan={1}>
             <Text 
             className="power secondSectionTitle"
@@ -421,6 +429,7 @@ export default function Home() {
               .map((newsChild, index)=> 
                 <HorizontalCard
                   key={index}
+                  id={newsChild.id}
                   title= {newsChild.title}
                   titleFontSize= {'18px'}
                   image= {newsChild.image}
@@ -443,6 +452,7 @@ export default function Home() {
               .map((newsChild, index)=> 
                 <HorizontalCard
                   key={index}
+                  id={newsChild.id}
                   title= {newsChild.title}
                   titleFontSize= {'18px'}
                   image= {newsChild.image}
@@ -462,9 +472,11 @@ export default function Home() {
               {postList
               .filter(item => item.section === 2 && item.category === 'Saúde') 
               .sort((a, b) => (a.order|| 0) - ( b.order|| 0))
+              .slice(0, 5)
               .map((newsChild, index)=> 
                 <HorizontalCard
                   key={index}
+                  id={newsChild.id}
                   title= {newsChild.title}
                   titleFontSize= {'18px'}
                   image= {newsChild.image}
