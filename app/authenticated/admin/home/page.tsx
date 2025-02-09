@@ -11,22 +11,32 @@ export default function AdminHome(){
   return(
     <Flex minH='100vh' >
       <Nav setSection={setSection}/>
-      <Flex flexDirection='column' w='100%'>
+      <Flex 
+      flexDirection='column' 
+      w='100%'
+      ml= {{base:'40px', lg:'300px'}}>
         <Flex 
         w='100%' 
         padding='10px 20px' 
         borderBottom={'2px solid #0891B2'}
-        justifyContent={'space-between'}>
+        >
           {section == 'post' &&
-            <Text color='#0891B2' fontSize='30px' fontWeight={500}>
+            <Flex w='100%' justifyContent={'space-between'}>
+            <Text color='#0891B2' fontSize={{base:'25px', md:'30px'}} fontWeight={500}>
               Postagens
             </Text>
+            <Link href='add-edit-post'>
+              <Button colorPalette='cyan'>
+                Adicionar
+              </Button>
+            </Link>
+            </Flex>
           }
-          <Link href='add-edit-post'>
-            <Button colorPalette='cyan'>
-              Adicionar
-            </Button>
-          </Link>
+          {section == 'user' &&
+            <Text color='#0891B2' fontSize={{base:'25px', md:'30px'}} fontWeight={500}>
+              Usuários
+            </Text>
+          }
         </Flex>        
         {section == 'post' &&
           <AdminPost/>

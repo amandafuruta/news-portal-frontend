@@ -1,7 +1,7 @@
 'use client'
 import { Box , Image, Text } from "@chakra-ui/react";
 import Link from 'next/link';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useCookies } from 'react-cookie';
 import { IoMenu } from "react-icons/io5";
 
@@ -43,6 +43,15 @@ const menuOptions=[
 export default function Header(){
   const [cookies, , removeCookie] = useCookies(['user_token'])
       , [mobileMenu, setMobileMenu] = useState(false)
+      , [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    setLoaded(true)
+  }, []);
+
+  if (!loaded) {
+    return null;
+  }
 
   return(
     <Box position='fixed' top={0} w='100%' zIndex={2} backgroundColor='#fff'>

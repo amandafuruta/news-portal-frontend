@@ -1,5 +1,5 @@
 'use client'
-import { Box, Button, Flex, Image, Input, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, createListCollection, Flex, Image, Input, SelectContent, SelectItem, SelectLabel, SelectRoot, SelectTrigger, SelectValueText, Spinner, Text } from "@chakra-ui/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaRegTrashAlt, FaRegEdit  } from "react-icons/fa";
@@ -31,6 +31,13 @@ interface Post{
   section: number
 }
 
+const options = createListCollection({
+  items: [
+    { label: "Mais Recente", value: "latest" },
+    { label: "Mais Antigo", value: "oldest" }
+  ],
+})
+
 export default function AdminPost(){
   const [postList, setPostList] = useState<Post[]>([])
       , [filteredPosts, setFilteredPosts] = useState<Post[]>([])
@@ -52,6 +59,24 @@ export default function AdminPost(){
   useEffect(() => {
     getPostList();
   }, []); 
+
+  const handleSortChange = (value: string) => {
+    const parseDate = (dateString: string) => {
+      const [datePart, timePart] = dateString.split(' ');
+      const [day, month, year] = datePart.split('-');
+      const [hours, minutes] = timePart.split(':');
+      
+      return new Date(`${year}-${month}-${day}T${hours}:${minutes}:00`);
+    };
+  
+    if (value === "latest") {
+      const sortedPosts = [...postList].sort((a, b) => parseDate(b.datePublished).getTime() - parseDate(a.datePublished).getTime())
+      setFilteredPosts(sortedPosts)
+    } else if (value === "oldest") {
+      const sortedPosts = [...postList].sort((a, b) => parseDate(a.datePublished).getTime() - parseDate(b.datePublished).getTime())
+      setFilteredPosts(sortedPosts)
+    }
+  };
 
   const handleDeleteClick = async() => {
     async function deletePost() {
@@ -122,14 +147,16 @@ export default function AdminPost(){
         <Flex 
           maxW='1000px' 
           w='100%' 
-          justifyContent='center'
-          mb='10px'
-          mt='30px'>
+          mb='40px'
+          mt='20px'
+          px='10px'
+          alignItems={{base:'baseline', md:'center'}}
+          justifyContent='space-evenly'
+          flexDirection={{base:'column-reverse', md:'row'}}>
             <Box 
             position='relative'
-            maxW='500px'
+            maxW='400px'
             w='100%'
-            mb='10px'
             _after={{
               content: '""',
               position: 'absolute',
@@ -152,35 +179,67 @@ export default function AdminPost(){
                 }}              
               />   
             </Box>
+            <SelectRoot 
+            maxW='300px' 
+            w='100%' 
+            collection={options} 
+            flexDir='row' 
+            alignItems='center'
+            mb={{base:'20px', md:'0px'}}
+            onValueChange={(details) => {
+              handleSortChange(details.value[0])
+            }}>
+              <SelectLabel w='150px'>Ordenar por:</SelectLabel>
+              <Flex flexDirection='column' position='relative'>
+                <SelectTrigger w='195px'>
+                  <SelectValueText placeholder="data de publicação" />
+                </SelectTrigger>
+                <SelectContent 
+                position='absolute'
+                bottom='-73px'
+                w='195px'>
+                  {options.items.map((opt) => (
+                    <SelectItem item={opt} key={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Flex>
+            </SelectRoot>
         </Flex>     
         <Box maxW='1000px' w='100%' padding='10px'>
           {filteredPosts.map((post, index)=> 
-            <Flex key={index} mb='20px' alignItems='center'>
+            <Flex key={index} 
+            mb={{base:'55px', md:'20px' }}
+            alignItems='center' 
+            flexDirection={{base:'column', md:'row'}}>
               <Box 
               maxW='100px' 
               w='100%'
               h='80px' 
               borderRadius='5px' 
               overflow='hidden'
-              mr='20px'>
+              mr={{base:'0px', md:'20px'}}>
                 <Image src={post.image} alt={post.alt}  w='100%' h='100%' />
               </Box>
               <Flex 
               flexDirection='column' 
               maxW='700px'
               w='100%'
-              mr='40px'>
+              mr={{base:'0px', md:'40px'}}>
                 <Text 
                 fontWeight={500} 
                 color='#646363'
                 fontSize='18px'
-                mb='5px'>
+                mb='5px'
+                textAlign={{base:'center', md:'left'}}>
                   {post.title}
                 </Text>
                 <Text
                 fontWeight={500} 
                 color='#c4bebe'
-                fontSize='15px'>
+                fontSize='15px'
+                textAlign={{base:'center', md:'left'}}>
                   {post.datePublished}
                 </Text>
               </Flex>
