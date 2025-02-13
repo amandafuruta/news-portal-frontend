@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { Box, Button, Flex, Image, Input, Spinner, Stack, Text} from "@chakra-ui/react";
 import { useState } from "react";
 import { Field } from '@/components/ui/field';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import { useCookies } from 'react-cookie';
 
@@ -15,28 +15,35 @@ interface IFormInput {
 export default function AdminLogin(){
   const [loading, setLoading] = useState(false)
       , { register, handleSubmit, formState: { errors }  } = useForm<IFormInput>()  
-      , setCookie = useCookies()[1]        
+      , setCookie = useCookies()[1]   
+      , router = useRouter()     
       , onSubmit: SubmitHandler<IFormInput> = async(data) => {
         setLoading(true)
-        const res = await fetch(`${process.env.PUBLIC_API_URL}/token-team-auth/`,  {
-          'method': 'POST',
-          'body': JSON.stringify(data),
-          'headers':{
-            'Content-type': 'application/json'
+
+        try{
+          const res = await fetch(`${process.env.PUBLIC_API_URL}/token-team-auth/`,  {
+            'method': 'POST',
+            'body': JSON.stringify(data),
+            'headers':{
+              'Content-type': 'application/json'
+            }
+          })
+  
+          const resData = await res.json()
+  
+          if (res.status === 401){
+            toast.error("Acesso restrito a membros do time");
+          } else if (res.status === 400){
+            toast.error("Dados inválidos");
+          } else if(res.ok){
+            setCookie('userteam_token', resData.token)
+            router.push('/authenticated/admin/home')
           }
-        })
-
-        const resData = await res.json()
-
-        if (res.status === 401){
+        } catch(e) {
+          toast.error("Erro na requisição. Tente novamente.")
+          console.error("Login failed:", e)
+        } finally {
           setLoading(false)
-          toast.error("Acesso restrito a membros do time");
-        } else if (res.status === 400){
-          setLoading(false)
-          toast.error("Dados inválidos");
-        } else if(res.ok){
-          setCookie('userteam_token', resData.token)
-          redirect('/authenticated/admin/home')
         }
       }
       
@@ -81,7 +88,8 @@ export default function AdminLogin(){
             alignItems='center'>
               <Box position='relative' w='100%'>
                 <Field orientation="horizontal">
-                  <Input 
+                  <Input
+                  data-id="admin-email-field" 
                   border='1px solid #969696'
                   mb='10px'
                   placeholder="E-mail" 
@@ -102,6 +110,7 @@ export default function AdminLogin(){
               <Box position='relative' w='100%'>
                 <Field orientation="horizontal" >
                   <Input 
+                  data-id="admin-password-field" 
                   placeholder='Senha'
                   type='password'
                   flex="1"
@@ -119,7 +128,7 @@ export default function AdminLogin(){
                   </Text>
                 }
               </Box>
-              <Button maxW='200px' w='100%' type="submit" >
+              <Button maxW='200px' w='100%' type="submit" data-id="admin-login-btn" >
                 {
                   loading?
                   <Spinner/>

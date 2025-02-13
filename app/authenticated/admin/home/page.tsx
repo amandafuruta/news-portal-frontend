@@ -26,7 +26,7 @@ export default function AdminHome(){
               Postagens
             </Text>
             <Link href='add-edit-post'>
-              <Button colorPalette='cyan'>
+              <Button colorPalette='cyan' data-id='add_news'>
                 Adicionar
               </Button>
             </Link>

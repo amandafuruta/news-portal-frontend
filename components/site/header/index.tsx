@@ -79,7 +79,7 @@ export default function Header(){
                 </Text>
               </Link>
               :
-              <Link href='/login'>
+              <Link href='/login'  data-id='login-header-btn'>
                 <Text 
                 className="primary" 
                 mr='20px'

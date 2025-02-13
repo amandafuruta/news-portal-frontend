@@ -2,7 +2,7 @@
 import Footer from "@/components/site/footer/page";
 import Header from "@/components/site/header";
 import { Box, Text, Button, Spinner } from "@chakra-ui/react";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 
@@ -18,7 +18,8 @@ export default function ReaderProfile(){
   const [loading, setLoading] = useState(false)
       , [cookies, , removeCookie] = useCookies(['user_token'])
       , [user, setUser]= useState<User | null>(null)
-  
+      , router = useRouter()
+
   useEffect(()=> {
     const getUserInfo = async () => {
       const token = cookies.user_token
@@ -46,7 +47,7 @@ export default function ReaderProfile(){
   function Logout(){
     setLoading(true)
     removeCookie('user_token')
-    redirect('/')
+    router.push('/')
   }
 
   return(
@@ -60,7 +61,7 @@ export default function ReaderProfile(){
         <Text fontSize={'20px'} mb='20px'>
           Bem-vindo, {user?.first_name} !
         </Text>
-        <Button className='bgPrimary' onClick={() => Logout()}>
+        <Button className='bgPrimary' onClick={() => Logout()} data-id="logout-bnt">
           {
             loading?
             <Spinner/>

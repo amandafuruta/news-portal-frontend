@@ -4,7 +4,7 @@ import { Field } from '@/components/ui/field';
 import {Box, Text, Flex, Stack, Input, Button, Spinner } from '@chakra-ui/react';
 import Link from 'next/link';
 import { ToastContainer, toast } from 'react-toastify';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useCookies } from 'react-cookie';
 
@@ -17,31 +17,39 @@ export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.D
   const [loading, setLoading] = useState(false)
     , setCookie = useCookies()[1]
     , { register, handleSubmit, formState: { errors }  } = useForm<IFormInput>()    
+    , router = useRouter()
     , onSubmit: SubmitHandler<IFormInput> = async(data) => {
       setLoading(true)
-      const res = await fetch(`${process.env.PUBLIC_API_URL}/token-auth/`, {
-        'method': 'POST',
-        'body': JSON.stringify(data),
-        'headers': { 
-          'Content-Type': 'application/json'
-        }
-      })
 
-      const resData = await res.json()
-      
-      if (res.ok) {
-        setCookie('user_token', resData.token)
-        redirect('/authenticated/reader-profile')
-      }
-
-      if (!res.ok) {
-        setLoading(false)
-        if(resData.non_field_errors){
-          toast.error("E-mail ou senha incorreto");
-        } else {
-          toast.error("Ops, ocorreu um erro");
-        }
+      try{
+        const res = await fetch(`${process.env.PUBLIC_API_URL}/token-auth/`, {
+          'method': 'POST',
+          'body': JSON.stringify(data),
+          'headers': { 
+            'Content-Type': 'application/json'
+          }
+        })
+  
+        const resData = await res.json()
         
+        if (res.ok) {
+          setCookie('user_token', resData.token)
+          router.push('/authenticated/reader-profile')
+        }
+  
+        if (!res.ok) {
+          setLoading(false)
+          if(resData.non_field_errors){
+            toast.error("E-mail ou senha incorreto");
+          } else {
+            toast.error("Ops, ocorreu um erro");
+          }          
+        }
+      } catch (error) {
+        toast.error("Erro na requisição. Tente novamente.")
+        console.error("Login failed:", error)
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -80,6 +88,7 @@ export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.D
         <Box position='relative' w='100%'>
           <Field orientation="horizontal">
             <Input 
+            data-id="username-field"
             border='1px solid #969696'
             mb='10px'
             placeholder="E-mail" 
@@ -100,6 +109,7 @@ export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.D
         <Box position='relative' w='100%'>
           <Field orientation="horizontal" >
             <Input 
+            data-id="password-field"
             placeholder='Senha'
             type='password'
             flex="1"
@@ -117,7 +127,7 @@ export default function SignIn({ setSignupDisplay }: { setSignupDisplay: React.D
             </Text>
           }
         </Box>
-        <Button maxW='200px' w='100%' type="submit" >
+        <Button maxW='200px' w='100%' type="submit" data-id="login-enter-btn">
           {
             loading?
             <Spinner/>

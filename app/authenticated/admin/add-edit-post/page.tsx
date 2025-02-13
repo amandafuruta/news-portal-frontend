@@ -207,7 +207,8 @@ export default function AddEditPost(){
                 {/* Title */}
                 <Box position='relative' w='100%'>                
                   <Field label='Título'>
-                    <Input 
+                    <Input
+                    data-id="post-title-field"
                     border='1px solid #969696'
                     mb='10px'
                     type='text'
@@ -228,6 +229,7 @@ export default function AddEditPost(){
                 <Box position='relative' w='100%'>                
                   <Field label='Subtítulo'>
                     <Input 
+                    data-id="post-subtitle-field"
                     border='1px solid #969696'
                     mb='10px'
                     type='text'
